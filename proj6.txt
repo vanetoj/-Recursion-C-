@@ -1,0 +1,76 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+int half = 0;
+int add25 = 1;
+
+void printSolution(int moves[], int moveCount, int maxDepth) {
+    int tokens = 13;
+    cout << "Found solution, with " << maxDepth - moveCount << " moves left." << endl;
+    for (int x = 0; x<moveCount; x++) {
+        if (moves[x] == half) {
+            tokens = tokens / 2;
+            cout << "Reducing by half, you get " << tokens << " tokens." << endl;
+        } else {
+            tokens = tokens + 25;
+            cout << "By adding 25, you get " << tokens << " tokens." << endl;
+        }
+    }
+}
+
+bool solve(int currentDepth, int maxDepth , int moves[], int moveCount, int tokens, int goal) {
+    if (tokens == goal) {
+        printSolution(moves, moveCount, maxDepth);
+        return true;
+    } else if (currentDepth < maxDepth) {
+        if (tokens % 2 == 0) {
+            int * m;
+            m = new int[moveCount+1];
+            for (int x = 0; x<moveCount; x++) {
+                m[x] = moves[x];
+            }
+            m[moveCount] = half;
+            return solve(currentDepth+1, maxDepth, m, moveCount+1, tokens/2, goal);
+        } else {
+            int * m;
+            m = new int[moveCount+1];
+            for (int x = 0; x<moveCount; x++) {
+                m[x] = moves[x];
+            }
+            m[moveCount] = add25;            
+            return solve(currentDepth+1, maxDepth, m, moveCount+1, tokens+25, goal);
+        }
+    } else {
+        return false;
+    }
+    return false;
+}
+
+void doSolution(int maxDepth, int goal) {
+    cout << "Searching for a solution within " << maxDepth << " moves..." << endl;   
+    int * m;
+    m = new int[0];    
+    int result = solve(1, maxDepth, m , 0 , 13, goal);    
+    if (!result) {
+        cout << "There was no solution" << endl;
+    }
+}
+
+int main() {
+    string answer = "";
+    while (answer != "n" && answer != "N") {
+        cout << "Enter the number of tokens you want to reach:" << endl;
+        int goal;
+        cin >> goal;
+        cout << "What is the number of turns:" << endl;
+        int maxDepth;
+        cin >> maxDepth;
+        
+        doSolution(maxDepth, goal);
+        cout << endl;
+        cout << "Would you like to try again [Y/N]?";
+        cin >> answer;
+    }
+}
